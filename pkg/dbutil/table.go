@@ -19,11 +19,12 @@ import (
 	"strings"
 
 	"github.com/pingcap/errors"
-	"github.com/pingcap/parser"
-	"github.com/pingcap/parser/ast"
-	"github.com/pingcap/parser/model"
 	"github.com/pingcap/tidb/ddl"
-	_ "github.com/pingcap/tidb/planner/core"        // to setup expression.EvalAstExpr. See: https://github.com/pingcap/tidb/blob/a94cff903cd1e7f3b050db782da84273ef5592f4/planner/core/optimizer.go#L202
+	"github.com/pingcap/tidb/parser"
+	"github.com/pingcap/tidb/parser/ast"
+	"github.com/pingcap/tidb/parser/model"
+	_ "github.com/pingcap/tidb/planner/core" // to setup expression.EvalAstExpr. See: https://github.com/pingcap/tidb/blob/a94cff903cd1e7f3b050db782da84273ef5592f4/planner/core/optimizer.go#L202
+	"github.com/pingcap/tidb/types"
 	_ "github.com/pingcap/tidb/types/parser_driver" // for parser driver
 )
 
@@ -62,9 +63,11 @@ func GetTableInfoBySQL(createTableSQL string, parser2 *parser.Parser) (table *mo
 				Primary: true,
 				State:   model.StatePublic,
 				Unique:  true,
+				Tp:      model.IndexTypeBtree,
 				Columns: []*model.IndexColumn{
 					{
-						Name: table.GetPkName(),
+						Name:   table.GetPkName(),
+						Length: types.UnspecifiedLength,
 					},
 				},
 			}
